@@ -31,10 +31,10 @@ public class ChangeMaking {
 	 */
 	public int selectionFunctionFirstCandidate(MyList<Integer> candidates) {
 		if (candidates.length() == 0) return 0;		// to prevent the error of calling removeElement(null)
-		// it has to be noted that elements can be retrieved from index 1 as well
+		// it has to be noted that elements can be retrieved from index 0 as well
 		// as no detail has been given an arbitrary choice has been made 
-		int res = candidates.getElement(candidates.length());
-		candidates.removeElement(candidates.length());
+		int res = candidates.getElement(candidates.length()-1);
+		candidates.removeElement(candidates.length()-1);
 		return res;
 		//TO-DO
 	}
@@ -52,7 +52,7 @@ public class ChangeMaking {
 	 */	
 	public int selectionFunctionBestCandidate( MyList<Integer> candidates ){
 		int res = 0;
-		for (int i = 1; i <= candidates.length(); i++){
+		for (int i = 0; i <= candidates.length()-1; i++){
 			if (res < candidates.getElement(i)) res = candidates.getElement(i);
 		}
 		return res;
@@ -84,8 +84,11 @@ public class ChangeMaking {
 	/**
 	 * Given a current solution, this function states whether it is a final
 	 * solution or it can still be improved.<br>
+	 * 
+	 * 		// 
 	 * To determine it, it checks whether there is (at least) one item not
 	 * picked before that fits into the knapsack.
+	 * 		// without getting the size of the knapstack it is going to be difficult to evaluate
 	 * 
 	 * @param nbCandidates:
 	 *            number of candidates that have not been yet selected by the
@@ -93,6 +96,11 @@ public class ChangeMaking {
 	 * @return: Whether the current solution is the final solution.
 	 */
 	public boolean solutionTest(MyList<Integer> candidates) {
+		// for (int i = 0; i < candidates.length(); i++){
+		// 	if (candidates.getElement(i) - _AMOUNT_ >= 0 ) return true;
+		// }
+		// return false;
+
 		if (candidates.length() == 0) return false;
 		return true;
 			//TO-DO
@@ -118,15 +126,15 @@ public class ChangeMaking {
 	 */	
 
 	public int  objectiveFunction(MyList<Integer> sol){
-		//return sol.length();
+		return sol.length();
 
 		// this implementation seems more usefull for the solve function:
 		// (by returning the changeGenerated)
-		int result = 0;
-		for (int i = 1; i < sol.length(); i++){
-			result += sol.getElement(i);
-		}
-		return result;
+		// int result = 0;
+		// for (int i = 1; i < sol.length(); i++){
+		// 	result += sol.getElement(i);
+		// }
+		// return result;
 			//TO-DO
 	}
 	
