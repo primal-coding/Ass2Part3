@@ -33,8 +33,8 @@ public class ChangeMaking {
 		if (candidates.length() == 0) return 0;		// to prevent the error of calling removeElement(null)
 		// it has to be noted that elements can be retrieved from index 0 as well
 		// as no detail has been given an arbitrary choice has been made 
-		int res = candidates.getElement(candidates.length()-1);
-		candidates.removeElement(candidates.length()-1);
+		int res = candidates.getElement(0);
+		candidates.removeElement(0);
 		return res;
 		//TO-DO
 	}
@@ -53,7 +53,7 @@ public class ChangeMaking {
 	public int selectionFunctionBestCandidate( MyList<Integer> candidates ){
 		int res = 0;
 		int remove = 0;
-		for (int i = 0; i < candidates.length()-1; i++){
+		for (int i = 0; i < candidates.length(); i++){
 			if (res < candidates.getElement(i)) {
 				remove = i;
 				res = candidates.getElement(i);
@@ -77,7 +77,7 @@ public class ChangeMaking {
 	 */	
 
 	public boolean feasibilityTest(int candidateValue, int amount, int changeGenerated){
-		if (changeGenerated + candidateValue > amount) return false;
+		if ((changeGenerated + candidateValue) > amount) return false;
 		return true;
 			//TO-DO
 	}
@@ -168,48 +168,61 @@ public class ChangeMaking {
 		int candidateValue = 0;
 		int countCoinInUse = 0;
 		MyList<Integer> sol = new MyDynamicList<Integer>();
-		MyList<Integer> originalCoinValues = coinValues;
+		MyList<Integer> solValues = new MyDynamicList<Integer>();
+		MyList<Integer> originalCoinValues = new MyDynamicList<Integer>();
+		for (int i = 0; i < coinValues.length(); i++) originalCoinValues.addElement(i, coinValues.getElement(i));
 		boolean loop = true;
-		
 		
 		if (typeSelectFunc == 1){
 			candidateValue = selectionFunctionFirstCandidate(coinValues);
 			while (loop){
 				if (feasibilityTest(candidateValue, amount, changeGenerated)){
-					sol.addElement(candidateNumber,++countCoinInUse);
+					countCoinInUse++;
 					changeGenerated += candidateValue;
 				}
 				else { 
+					amountOfCoinsGenerated += countCoinInUse;
+					solValues.addElement(candidateNumber,candidateValue);
+					sol.addElement(candidateNumber,countCoinInUse);
 					if (solutionTest(coinValues)) {
 						candidateValue = selectionFunctionFirstCandidate(coinValues);
 						candidateNumber++;
-						amountOfCoinsGenerated += countCoinInUse;
 						countCoinInUse = 0;
 					}
 					else loop = false;
 				}
 			}
+
 		}
 		else {
 			candidateValue = selectionFunctionBestCandidate(coinValues);
 			while (loop){
 				if (feasibilityTest(candidateValue, amount, changeGenerated)){
-					sol.addElement(candidateNumber,++countCoinInUse);
+					countCoinInUse++;
 					changeGenerated += candidateValue;
 				}
 				else { 
+					amountOfCoinsGenerated += countCoinInUse;
+					solValues.addElement(candidateNumber,candidateValue);
+					sol.addElement(candidateNumber,countCoinInUse);
 					if (solutionTest(coinValues)) {
 						candidateValue = selectionFunctionBestCandidate(coinValues);
 						candidateNumber++;
-						amountOfCoinsGenerated += countCoinInUse;
 						countCoinInUse = 0;
 					}
-					else loop = false;
+					else {
+						loop = false;
+					}
 				}
 			}
 		}
 		//TO-DO
-
+		for (int i = 0; i < originalCoinValues.length(); i++) coinValues.addElement(i, originalCoinValues.getElement(i));
+		System.out.println("Total amount of coins used: " + amountOfCoinsGenerated);
+		System.out.println("For a total value of: " + changeGenerated);
+		for (int i = 0; i < sol.length(); i++){
+			System.out.println("#" + i + " type of coin: " + solValues.getElement(i) + " / Amount: " + sol.getElement(i));
+		}
 		return sol;
 	}
 	
