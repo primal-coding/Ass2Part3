@@ -52,9 +52,14 @@ public class ChangeMaking {
 	 */	
 	public int selectionFunctionBestCandidate( MyList<Integer> candidates ){
 		int res = 0;
-		for (int i = 0; i <= candidates.length()-1; i++){
-			if (res < candidates.getElement(i)) res = candidates.getElement(i);
+		int remove = 0;
+		for (int i = 0; i < candidates.length()-1; i++){
+			if (res < candidates.getElement(i)) {
+				remove = i;
+				res = candidates.getElement(i);
+			}
 		}
+		if (res > 0) candidates.removeElement((remove));
 		return res;
 			//TO-DO
 	}
@@ -157,30 +162,55 @@ public class ChangeMaking {
 			return coinValues;
 		}
 
-		int amountOfCoins = 0;
+		int amountOfCoinsGenerated = 0;
+		int candidateNumber = 0;
 		int changeGenerated = 0;
 		int candidateValue = 0;
-		int coinInUse = 0;
 		int countCoinInUse = 0;
 		MyList<Integer> sol = new MyDynamicList<Integer>();
 		MyList<Integer> originalCoinValues = coinValues;
-		MyList<Integer> result = new MyDynamicList<Integer>();
+		boolean loop = true;
 		
-		while (feasibilityTest(candidateValue, amount, changeGenerated)){
-			if (typeSelectFunc == 1){
-				coinInUse = selectionFunctionFirstCandidate(coinValues);
-				sol.addElement(countCoinInUse,coinInUse);
-				countCoinInUse++;
-				
-			}
-			else {
-
+		
+		if (typeSelectFunc == 1){
+			candidateValue = selectionFunctionFirstCandidate(coinValues);
+			while (loop){
+				if (feasibilityTest(candidateValue, amount, changeGenerated)){
+					sol.addElement(candidateNumber,++countCoinInUse);
+					changeGenerated += candidateValue;
+				}
+				else { 
+					if (solutionTest(coinValues)) {
+						candidateValue = selectionFunctionFirstCandidate(coinValues);
+						candidateNumber++;
+						amountOfCoinsGenerated += countCoinInUse;
+						countCoinInUse = 0;
+					}
+					else loop = false;
+				}
 			}
 		}
+		else {
+			candidateValue = selectionFunctionBestCandidate(coinValues);
+			while (loop){
+				if (feasibilityTest(candidateValue, amount, changeGenerated)){
+					sol.addElement(candidateNumber,++countCoinInUse);
+					changeGenerated += candidateValue;
+				}
+				else { 
+					if (solutionTest(coinValues)) {
+						candidateValue = selectionFunctionBestCandidate(coinValues);
+						candidateNumber++;
+						amountOfCoinsGenerated += countCoinInUse;
+						countCoinInUse = 0;
+					}
+					else loop = false;
+				}
+			}
+		}
+		//TO-DO
 
-			//TO-DO
-
-		return result;
+		return sol;
 	}
 	
 }
